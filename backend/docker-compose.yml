@@ -6,7 +6,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: tic-backend
+    container_name: test-backend
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -15,7 +15,7 @@ services:
     environment:
       - NODE_ENV=development
       - REDIS_URL=redis://redis:6379
-      - MONGO_URI=mongodb://mongo-db:27017/tic_db
+      - MONGO_URI=mongodb://mongo-db:27017/test_db
     volumes:
       # 1. Bind mount local backend directory to /app for real-time code changes (Hot-Reload)
       - ./backend:/app
@@ -31,7 +31,7 @@ services:
   # Redis In-Memory Cache Service
   redis:
     image: redis:7-alpine
-    container_name: tic-redis
+    container_name: test-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -41,7 +41,7 @@ services:
   # MongoDB Database Service for storing collections (users, products, orders, etc.)
   mongo-db:
     image: mongo:latest
-    container_name: tic-mongo
+    container_name: test-mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
