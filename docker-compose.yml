@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Backend API Service configuration
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tic-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/config.env
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+      - MONGO_URI=mongodb://mongo-db:27017/tic_db
+    volumes:
+      # 1. Bind mount local backend directory to /app for real-time code changes (Hot-Reload)
+      - ./backend:/app
+      # 2. Prevent local node_modules from overwriting the container's node_modules
+      - /app/node_modules
+      # 3. Persist uploaded files and logs outside the container lifecycle
+      - ./backend/uploads:/app/uploads
+      - ./backend/logs:/app/logs
+    depends_on:
+      - redis
+      - mongo-db
+
+  # Redis In-Memory Cache Service
+  redis:
+    image: redis:7-alpine
+    container_name: tic-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  # MongoDB Database Service for storing collections (users, products, orders, etc.)
+  mongo-db:
+    image: mongo:latest
+    container_name: tic-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  redis-data:
+  mongo-data:
