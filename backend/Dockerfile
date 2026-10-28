@@ -23,4 +23,4 @@ USER node
 EXPOSE 8000
 
 # Start the application using the development script (e.g., using nodemon)
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
